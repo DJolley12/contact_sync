@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "contact_sync_service",
+    "contact_sync_api",
+]
