@@ -11,6 +11,7 @@ extern crate serde;
 extern crate rocket_contrib;
 
 use rocket_contrib::json::{Json, JsonValue};
+
 use serde::{Serialize, Deserialize};
 use diesel::prelude::*;
 use diesel::pg::PgConnection;

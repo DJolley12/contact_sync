@@ -22,7 +22,7 @@ pub struct User {
         pub password: String,
 }
 
-#[derive(Insertable)]
+#[derive(Insertable, Deserialize)]
 #[table_name="contacts"]
 pub struct NewContact<'a> {
     pub first_name: &'a str,
@@ -30,7 +30,7 @@ pub struct NewContact<'a> {
     pub owner_id: &'a i32,
 }
 
-#[derive(Queryable)]
+#[derive(Queryable, Deserialize)]
 pub struct Contact {
     pub id: i32,
     pub first_name: String,

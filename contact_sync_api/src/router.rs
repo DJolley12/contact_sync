@@ -40,8 +40,9 @@ pub fn create_new_user(new_user: Json<NewUser>) -> status::Accepted<String> {
     status::Accepted(Some(format!("user: '{}'", return_user.id)))
 }
 
+#[post("/", data = "<new_contact>")]
 pub fn create_new_contact(new_contact: Json<NewContact>) -> status::Accepted<String> {
-    let conn = contact_sync_service::establish_conneciton();
+    let conn = contact_sync_service::establish_connection();
 
     let insert = NewContact { ..new_contact.into_inner() };
 
