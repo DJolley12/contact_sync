@@ -20,5 +20,6 @@ use contact_sync_service::models::{Email, NewEmail};
 fn main() {
     rocket::ignite()
         .mount("/new_user", routes![router::create_new_user])
+        .mount("/new_contact", routes![ router::create_new_contact])
         .launch();
 }
