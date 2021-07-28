@@ -21,6 +21,7 @@ use rocket::Data;
 use rocket::Request;
 use rocket::response::status;
 use rocket::response::content;
+use serde::de::IntoDeserializer; 
 
 #[post("/", data = "<new_user>")]
 pub fn create_new_user(new_user: Json<NewUser>) -> status::Accepted<String> {
@@ -43,7 +44,7 @@ pub fn create_new_user(new_user: Json<NewUser>) -> status::Accepted<String> {
 #[post("/", data = "<new_contact>")]
 pub fn create_new_contact(new_contact: Json<NewContact>) -> status::Accepted<String> {
     let conn = contact_sync_service::establish_connection();
-
+    // let insert: NewContact = serde_json::from_str(new_contact).unwrap();
     let insert = NewContact { ..new_contact.into_inner() };
 
     let return_contact = contact_sync_service::create_contact(

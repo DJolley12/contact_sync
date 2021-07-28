@@ -49,7 +49,7 @@ pub fn create_user<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a 
         .expect("Error saving new user.")
 } 
 
-pub fn create_contact<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a str, owner_id: &'a i32) -> Contact {
+pub fn create_contact<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a str, owner_id: i32) -> Contact {
     use schema::contacts;
 
     let new_contact = NewContact {
