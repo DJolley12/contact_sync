@@ -1,3 +1,5 @@
+#![feature(proc_macro_hygiene, decl_macro)]
+
 pub mod schema;
 pub mod models;
 
@@ -9,9 +11,12 @@ extern crate serde_json;
 extern crate serde;
 #[macro_use] extern crate serde_derive;
 extern crate rocket_contrib;
+extern crate crypto;
+
+use crypto::digest::Digest;
+use crypto::sha3::Sha3;
 
 use rocket_contrib::json::{Json, JsonValue};
-
 use serde::{Serialize, Deserialize};
 use diesel::prelude::*;
 use diesel::pg::PgConnection;
@@ -40,14 +45,20 @@ pub fn create_user<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a 
         first_name: first_name,
         last_name: last_name,
         user_name: user_name,
-        password: password,
+        password: &hash_password(password),
     };
 
     diesel::insert_into(users::table)
         .values(&new_user)
         .get_result(conn)
         .expect("Error saving new user.")
-} 
+}
+
+fn hash_password(password: &str) -> String {
+    let mut hasher = Sha3::sha3_256();
+    hasher.input_str(password);
+    hasher.result_str()
+}
 
 pub fn create_contact<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a str, owner_id: i32) -> Contact {
     use schema::contacts;

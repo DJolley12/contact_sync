@@ -3,7 +3,8 @@ CREATE TABLE users (
     first_name VARCHAR NOT NULL,
     last_name VARCHAR NOT NULL,
     user_name VARCHAR NOT NULL,
-    password VARCHAR NOT NULL
+    password VARCHAR NOT NULL,
+    CONSTRAINT unique_user_name (user_name);
 );
 
 CREATE TABLE contacts (
