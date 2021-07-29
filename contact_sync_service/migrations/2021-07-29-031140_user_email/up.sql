@@ -1,0 +1,2 @@
+ALTER TABLE users 
+ADD COLUMN email_address VARCHAR NOT NULL UNIQUE;
