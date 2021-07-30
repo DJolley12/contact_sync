@@ -22,6 +22,12 @@ pub struct User {
         pub password: String,
 }
 
+#[derive(FromForm, Deserialize)]
+struct LoginInfo {
+    username: String,
+    password: String,
+}
+
 #[derive(Insertable, Deserialize, Debug)]
 #[table_name="contacts"]
 pub struct NewContact<'a> {
