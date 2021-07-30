@@ -28,6 +28,7 @@ use self::models::{User, NewUser};
 use self::models::{Contact, NewContact};
 use self::models::{PhoneNumber, NewPhoneNumber};
 use self::models::{Email, NewEmail};
+use self::schema;
 
 pub fn establish_connection() -> PgConnection {
     dotenv().ok();
@@ -52,6 +53,42 @@ pub fn create_user<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a 
         .values(&new_user)
         .get_result(conn)
         .expect("Error saving new user.")
+}
+
+pub fn match_user<'a>(conn: &PgConnection, user_name: &'a str, password: &'a str) -> User {
+    use schema::users::dsl::*;
+
+    let hashed_password = hash_password(password);
+
+    let mut db_user_vec: Vec<User> = 
+        users.filter(user_name.eq(user_name))
+        .limit(1)
+        .load::<User>(conn)
+        .expect("Unable to login");
+    
+    let db_user = db_user_vec[0];
+
+    return db_user;
+    
+}
+
+pub fn login<'a>(conn: &PgConnection, user_name: &'a str, password: &'a str) -> User {
+    use schema::users::dsl::*;
+
+    let hashed_password = hash_password(password);
+
+    let mut db_user: User = 
+        users.find(user_name)
+        .load::<User>(conn)
+        .expect("Unable to login");
+
+        
+
+    match (db_user.password == hashed_password {
+        return db_user;
+    } 
+    
+    
 }
 
 fn hash_password(password: &str) -> String {

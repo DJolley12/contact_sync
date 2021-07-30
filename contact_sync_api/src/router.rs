@@ -11,7 +11,7 @@
 use std::io::{self, Read};
 use rocket_contrib::json::{Json, JsonValue};
 use contact_sync_service;
-use contact_sync_service::models::{User, NewUser};
+use contact_sync_service::models::{User, NewUser, LoginInfo};
 use contact_sync_service::models::{Contact, NewContact};
 use contact_sync_service::models::{PhoneNumber, NewPhoneNumber};
 use contact_sync_service::models::{Email, NewEmail};
@@ -34,11 +34,20 @@ pub fn create_new_user(new_user: Json<NewUser>) -> status::Accepted<String> {
         &conn,
         insert.first_name, 
         insert.last_name,
-         insert.user_name,
-          insert.password
+        insert.user_name,
+        insert.password
         );
 
     status::Accepted(Some(format!("user: '{}'", return_user.id)))
+}
+
+#[post("/login", data = "<login_user>")]
+pub fn login(login_info: Json<LoginInfo>) -> status::Accepted<String> {
+    let conn = contact_sync_service::establish_connection();
+
+    let login = LoginInfo { ..login_info.into_inner() };
+
+    
 }
 
 #[post("/", data = "<new_contact>")]
