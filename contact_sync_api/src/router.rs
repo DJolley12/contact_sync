@@ -48,7 +48,7 @@ pub fn login(login_info: Json<LoginInfo>) -> status::Accepted<String> {
     let login = LoginInfo { ..login_info.into_inner() };
     
     let user = contact_sync_service::match_user(conn, login_info);
-    
+    let result = contact_sync_service::login(conn, login_info)
 }
 
 #[post("/", data = "<new_contact>")]
