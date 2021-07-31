@@ -24,7 +24,7 @@ use dotenv::dotenv;
 use core::num;
 use std::env;
 use rocket_contrib::json;
-use self::models::{User, NewUser};
+use self::models::{User, NewUser, LoginInfo, AuthenticatedUser};
 use self::models::{Contact, NewContact};
 use self::models::{PhoneNumber, NewPhoneNumber};
 use self::models::{Email, NewEmail};
@@ -55,43 +55,43 @@ pub fn create_user<'a>(conn: &PgConnection, first_name: &'a str, last_name: &'a 
         .expect("Error saving new user.")
 }
 
-pub fn match_user<'a>(conn: &PgConnection, user_name: &'a str, password: &'a str) -> User {
+pub fn match_user<'a>(conn: &PgConnection, login_info: LoginInfo) -> User {
     use schema::users::dsl::*;
 
-    let hashed_password = hash_password(password);
 
     let mut db_user_vec: Vec<User> = 
-        users.filter(user_name.eq(user_name))
+        users.filter(user_name.eq(login_info.username))
         .limit(1)
         .load::<User>(conn)
         .expect("Unable to login");
+    let username = login_info.username.to_string();
+    // match (login_info.username, login_info.password) {
+    //     (Some(user_name), Some(password)) => {
+    //         ...
+    //     }
+    // }
     
     let db_user = db_user_vec[0];
 
     return db_user;
-    
 }
 
-pub fn login<'a>(conn: &PgConnection, user_name: &'a str, password: &'a str) -> User {
+pub fn login<'a>(conn: &PgConnection, login_attempt: LoginInfo, db_user: User) -> Option<AuthenticatedUser> {
     use schema::users::dsl::*;
 
-    let hashed_password = hash_password(password);
+    let login_attempt_pass = hash_password(login_attempt.password);
+    let login_attempt_user = login_attempt.username.to_string();
 
-    let mut db_user: User = 
-        users.find(user_name)
-        .load::<User>(conn)
-        .expect("Unable to login");
-
+    if login_attempt_pass == db_user.password && login_attempt_user == login_attempt_user {
+        let authenticated_user = AuthenticatedUser {id: db_user.id};
+        Some(authenticated_user)
+    } else {
+        return None;
+    }
         
-
-    match (db_user.password == hashed_password {
-        return db_user;
-    } 
-    
-    
 }
 
-fn hash_password(password: &str) -> String {
+fn hash_password<'a>(password: &'a str) -> String {
     let mut hasher = Sha3::sha3_256();
     hasher.input_str(password);
     hasher.result_str()

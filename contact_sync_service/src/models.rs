@@ -23,9 +23,13 @@ pub struct User {
 }
 
 #[derive(FromForm, Deserialize)]
-struct LoginInfo {
-    username: String,
-    password: String,
+pub struct LoginInfo<'a> {
+    pub username: &'a str,
+    pub password: &'a str,
+}
+
+pub struct AuthenticatedUser {
+    pub id: i32
 }
 
 #[derive(Insertable, Deserialize, Debug)]
