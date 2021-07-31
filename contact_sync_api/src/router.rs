@@ -42,13 +42,18 @@ pub fn create_new_user(new_user: Json<NewUser>) -> status::Accepted<String> {
 }
 
 #[post("/login", data = "<login_user>")]
-pub fn login(login_info: Json<LoginInfo>) -> status::Accepted<String> {
+pub fn login(login_info: Json<LoginInfo>) -> status::Accepted<User> {
     let conn = contact_sync_service::establish_connection();
 
     let login = LoginInfo { ..login_info.into_inner() };
     
-    let user = contact_sync_service::match_user(conn, login_info);
-    let result = contact_sync_service::login(conn, login_info)
+    let db_user = contact_sync_service::match_user(conn, login_info);
+    let result = contact_sync_service::login(conn, login_info);
+    if result == Some(User) {
+        Ok(db_user)
+    } 
+
+    status::Unauthorized
 }
 
 #[post("/", data = "<new_contact>")]
